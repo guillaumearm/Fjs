@@ -2,11 +2,22 @@
 ** Author: Guillaume ARM **************************************************************
 ** main.js: Some Fjs tests ************************************************************
 **************************************************************************************/
-import F, {compose} from './F'
+import F, {compose, foldl, foldr} from './F'
 
-const add = x => y => x+y;
-const add3 = compose (add (1)) (add (2))
+const rev = ([...xs]) => {
+	return foldl 
+		((acc,x) => [x, ...acc]) 
+		('') 
+		(xs);
+}
 
-console.log(add3(1));
-console.log(add3(2));
-console.log(add3(3));
+//TODO: curry/uncurry + apply
+
+
+
+const toString = t => t.join("")
+let str = "Hello World"
+
+// This reads from right to left
+console.log ( compose (toString) (rev) ("Hello World") )
+
