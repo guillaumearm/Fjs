@@ -1,0 +1,29 @@
+{
+  "name": "Fjs",
+  "version": "0.0.1",
+  "description": "Some functional stuffs for JS (ES2015)",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guillaumearm/Fjs.git"
+  },
+  "keywords": [
+    "functionnal",
+   	"curry",
+    "compose"
+  ],
+  "author": "Guillaume ARM <guillaume.arm@redpelicans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/guillaumearm/Fjs/issues"
+  },
+  "homepage": "https://github.com/guillaumearm/Fjs",
+  "scripts": {
+	  "start": "node main.js"
+  },
+  "private": true,
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
