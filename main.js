@@ -11,10 +11,6 @@ const rev = ([...xs]) => {
 		(xs);
 }
 
-//TODO: curry/uncurry + apply
-
-
-
 const toString = t => t.join("")
 let str = "Hello World"
 
