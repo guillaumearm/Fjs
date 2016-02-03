@@ -21,7 +21,6 @@
   "scripts": {
     "start": "babel-node main.js"
   },
-  "private": true,
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.4.5",
