@@ -2,7 +2,7 @@
   "name": "Fjs",
   "version": "0.0.1",
   "description": "Some functional stuffs for JS (ES2015)",
-  "main": "main.js",
+  "main": "F.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/guillaumearm/Fjs.git"
