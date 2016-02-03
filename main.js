@@ -2,7 +2,7 @@
 ** Author: Guillaume ARM **************************************************************
 ** main.js: Some Fjs tests ************************************************************
 **************************************************************************************/
-import F, {compose, foldl, foldr} from './F'
+import F, {compose, foldl, foldr} from './bundled_lib'
 
 const rev = ([...xs]) => {
 	return foldl 
