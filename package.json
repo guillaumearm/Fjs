@@ -1,6 +1,6 @@
 {
   "name": "Fjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Some functional stuffs for JS (ES2015)",
   "main": "F.js",
   "repository": {
