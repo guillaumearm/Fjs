@@ -3,6 +3,13 @@
 ** F.js: is little library utilites made for doing functional coding style with JS. ****
 ***************************************************************************************/
 
+
+/////////////////////// PRIVATE ////////////////////////////////////////////////
+const isUndefined = x => (x === _)
+const concatUndefined = xsa => xsb =>
+	xsa.map(x => !isUndefined(x) ? x : xsb.shift()).concat(xsb)
+////////////////////////////////////////////////////////////////////////////////
+
 export const _ = undefined
 
 export const union = obj => (...changes) => Object.assign({}, obj, ...changes)
@@ -11,11 +18,6 @@ export const curry = (f, ...xs) =>
 	xs.length === f.length
 		? f(...xs)
 		: curry.bind(this, f, ...xs)
-
-const isUndefined = x => (x === _)
-
-const concatUndefined = xsa => xsb =>
-	xsa.map(x => !isUndefined(x) ? x : xsb.shift()).concat(xsb)
 
 export const apply = (f, ...xs) => (...otherXs) =>
 	f.apply (this, concatUndefined (xs) (otherXs) )
