@@ -24,7 +24,7 @@ export const apply = (f, ...xs) => (...otherXs) =>
 	f.apply (this, concatUndefined (xs) (otherXs) )
 
 export const compose = f => g => x => f(g(x))
-export const update = obj => (...changes) => Object.assign({}, obj, ...changes)
+export const update = (obj) => (changes) => { return {...obj, ...changes} }
 
 // f :: (acc, x, i, arr) => acc
 export const foldl = f => acc => xs => xs.reduce(f, acc)
