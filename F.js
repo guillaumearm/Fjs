@@ -44,8 +44,8 @@ const exported_funcs = {
 	incr, decr
 }
 
-// Use as globals
-export const Fjs = () => { Object.assign(global, exported_funcs) }
+// Use globally
+export const UseFjsGlobally = () => { Object.assign(global, exported_funcs) }
 
 // Or with a normal ES6 scope
 export default exported_funcs
