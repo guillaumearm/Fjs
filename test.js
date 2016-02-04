@@ -2,27 +2,21 @@
 ** Author: Guillaume ARM **************************************************************
 ** main.js: Some Fjs tests ************************************************************
 **************************************************************************************/
-import {
-	_,
-	curry, apply, compose, update,
-	foldl, foldr,
-	incr, decr
-} from './F'
+import { Fjs as F } from './F' ; F()
 
+// Test compose and foldl
+// This reads from right to left
 const rev = ([...xs]) => {
 	return foldl 
 		((acc,x) => [x, ...acc]) 
 		('') 
 		(xs);
 }
-
 const toString = t => t.join("")
-let str = "Hello World"
-
-// Test compose and foldl
-// This reads from right to left
 console.log ( compose (toString) (rev) ("Hello World") )
 
 // Test apply
-const add = (a,b,c,d) => a+b+c+d
+const f1 = (a,b,c,d) => a+b+c+d
+const f2 = apply(f1, 1, __, 3, __)
+console.log(f2(2,4))
 
