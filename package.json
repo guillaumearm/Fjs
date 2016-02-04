@@ -8,16 +8,16 @@
     "url": "https://github.com/guillaumearm/Fjs.git"
   },
   "keywords": [
-	"Fjs",
+    "Fjs",
     "functionnal",
     "curry",
     "curryfied",
     "compose",
     "update",
     "apply",
-	"fold",
-	"foldl",
-	"foldr"
+    "fold",
+    "foldl",
+    "foldr"
   ],
   "author": "Guillaume ARM <guillaume.arm@redpelicans.com>",
   "license": "MIT",
@@ -26,16 +26,17 @@
   },
   "homepage": "https://github.com/guillaumearm/Fjs",
   "scripts": {
-	"preinstall": "npm run clean",
-	"postinstall": "npm run build",
+    "preinstall": "npm run clean",
+    "postinstall": "npm run build",
     "start": "babel-node test.js",
-	"build": "babel F.js > bundled_lib.js",
-	"clean": "rm -f bundled_lib.js"
+    "build": "babel F.js > bundled_lib.js",
+    "clean": "rm -f bundled_lib.js"
   },
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.4.5",
     "babel-core": "^6.4.5",
-    "babel-preset-es2015": "^6.3.13"
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13"
   }
 }
