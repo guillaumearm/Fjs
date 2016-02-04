@@ -1,6 +1,6 @@
 {
   "name": "Fjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Some functional stuffs for JS (ES2015)",
   "main": "bundled_lib.js",
   "repository": {
@@ -8,9 +8,16 @@
     "url": "https://github.com/guillaumearm/Fjs.git"
   },
   "keywords": [
+	"Fjs",
     "functionnal",
     "curry",
-    "compose"
+    "curryfied",
+    "compose",
+    "update",
+    "apply",
+	"fold",
+	"foldl",
+	"foldr"
   ],
   "author": "Guillaume ARM <guillaume.arm@redpelicans.com>",
   "license": "MIT",
