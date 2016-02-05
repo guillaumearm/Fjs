@@ -25,6 +25,8 @@ export const apply = (f, ...xs) => (...otherXs) =>
 
 export const compose = f => g => x => f(g(x))
 
+export const flip = f => a => b => f(b, a)
+
 // inject works with objects
 export const inject = curry ( (changes, obj) => { return {...obj, ...changes} } )
 
@@ -41,7 +43,8 @@ export const decr = x => --x
 
 const exported_funcs = {
 	__,
-	curry, apply, compose, inject,
+	curry, apply, compose, flip,
+	inject,
 	foldl, foldr,
 	incr, decr
 }
