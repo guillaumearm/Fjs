@@ -24,7 +24,9 @@ export const apply = (f, ...xs) => (...otherXs) =>
 	f.apply (this, concatUndefined (xs) (otherXs) )
 
 export const compose = f => g => x => f(g(x))
-export const update = (obj) => (changes) => { return {...obj, ...changes} }
+
+// inject works with objects
+export const inject = curry ( (changes, obj) => { return {...obj, ...changes} } )
 
 // f :: (acc, x, i, arr) => acc
 export const foldl = f => acc => xs => xs.reduce(f, acc)
@@ -39,7 +41,7 @@ export const decr = x => --x
 
 const exported_funcs = {
 	__,
-	curry, apply, compose, update,
+	curry, apply, compose, inject,
 	foldl, foldr,
 	incr, decr
 }
