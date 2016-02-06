@@ -2,7 +2,7 @@
 ** Author: Guillaume ARM **************************************************************
 ** main.js: Some Fjs tests ************************************************************
 **************************************************************************************/
-import { __, inject, flip, apply, foldl, compose } from './F'
+import { __, inject, flip, apply, foldl, compose } from '.'
 
 // Test compose and foldl
 // This reads from right to left

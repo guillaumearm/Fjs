@@ -1,6 +1,6 @@
 {
   "name": "Fjs",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Some functional stuffs for JS (ES2015)",
   "main": "bundled_lib.js",
   "repository": {
@@ -26,10 +26,8 @@
   },
   "homepage": "https://github.com/guillaumearm/Fjs",
   "scripts": {
-    "postinstall": "npm run -s build",
-    "start": "babel-node test.js",
-    "build": "babel F.js > bundled_lib.js",
-    "clean": "rm -f bundled_lib.js"
+    "test": "npm run -s build && babel-node test.js",
+    "build": "babel F.js > bundled_lib.js"
   },
   "dependencies": {},
   "devDependencies": {
