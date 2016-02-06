@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/guillaumearm/Fjs",
   "scripts": {
-    "preinstall": "npm run clean",
-    "postinstall": "npm run build",
+    "preinstall": "npm run -s clean",
+    "postinstall": "npm run -s build",
     "start": "babel-node test.js",
     "build": "babel F.js > bundled_lib.js",
     "clean": "rm -f bundled_lib.js"
