@@ -4,9 +4,15 @@
 **************************************************************************************/
 //import { __, inject, flip, apply, foldl, compose } from '.'
 
-import * as F from '.'
+// global scope injector
+const globalScopeInjector = lib => {
+	lib.globalScopeInjector = undefined
+	for (let f of Object.keys(lib))
+		global[f] = lib[f]
+}
 
-F.globalScopeInjector(F);
+import * as F from '.'
+globalScopeInjector(F);
 
 // Test compose and foldl
 // This reads from right to left
