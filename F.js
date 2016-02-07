@@ -15,6 +15,8 @@ const concatUndefined = xsa => xsb =>
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// FUNCTIONAL STYLE BASICS ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+export const id = x => x
+
 export const curry = (f, ...xs) =>
 	xs.length === f.length
 		? f(...xs)
@@ -42,7 +44,7 @@ export const incr = x => ++x
 export const decr = x => --x
 
 const exported_funcs = {
-	__,
+	__, id,
 	curry, apply, compose, flip,
 	inject,
 	foldl, foldr,
