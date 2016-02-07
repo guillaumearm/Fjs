@@ -4,9 +4,9 @@
 **************************************************************************************/
 //import { __, inject, flip, apply, foldl, compose } from '.'
 
-let lib = require('.')
-for (let f in lib)
-   global[f] = lib[f]
+import * as F from '.'
+
+F.globalScopeInjector(F);
 
 // Test compose and foldl
 // This reads from right to left

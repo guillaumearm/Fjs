@@ -5,6 +5,13 @@
 
 export const __ = undefined
 
+// global scope injector
+export const globalScopeInjector = lib => {
+	lib.globalScopeInjector = undefined
+	for (let f of Object.keys(lib))
+		global[f] = lib[f]
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// PRIVATE ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,4 +68,3 @@ export const ge = a => b =>  a >= b
 
 export const incr = x => ++x
 export const decr = x => --x
-
