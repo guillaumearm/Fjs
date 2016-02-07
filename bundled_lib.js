@@ -72,7 +72,27 @@ var inject = exports.inject = curry(function (changes, obj) {
 	return _extends({}, obj, changes);
 });
 
-// f :: (acc, x, i, arr) => acc
+// f :: (element, index, array) => array
+var map = exports.map = function map(f) {
+	return function (xs) {
+		return xs.map(f, undefined);
+	};
+};
+
+// p :: (element, index, array) => array
+// p is a predicat
+var all = exports.all = function all(p) {
+	return function (xs) {
+		return xs.every(p, undefined);
+	};
+};
+var any = exports.any = function any(p) {
+	return function (xs) {
+		return xs.some(p, undefined);
+	};
+};
+
+// f :: (accumulator, element, index, array) => accumulator
 var foldl = exports.foldl = function foldl(f) {
 	return function (acc) {
 		return function (xs) {
@@ -91,26 +111,57 @@ var foldr = exports.foldr = function foldr(f) {
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// USEFUL FOR COMPOSITION /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+var id = exports.id = function id(x) {
+	return x;
+};
+
+var and = exports.and = function and(a) {
+	return function (b) {
+		return a && b;
+	};
+};
+var or = exports.or = function or(a) {
+	return function (b) {
+		return a || b;
+	};
+};
+
+var eq = exports.eq = function eq(a) {
+	return function (b) {
+		return a == b;
+	};
+};
+var ne = exports.ne = function ne(a) {
+	return function (b) {
+		return a != b;
+	};
+};
+
+var lt = exports.lt = function lt(a) {
+	return function (b) {
+		return a < b;
+	};
+};
+var gt = exports.gt = function gt(a) {
+	return function (b) {
+		return a > b;
+	};
+};
+var le = exports.le = function le(a) {
+	return function (b) {
+		return a <= b;
+	};
+};
+var ge = exports.ge = function ge(a) {
+	return function (b) {
+		return a >= b;
+	};
+};
+
 var incr = exports.incr = function incr(x) {
 	return ++x;
 };
 var decr = exports.decr = function decr(x) {
 	return --x;
 };
-
-var exported_funcs = {
-	__: __,
-	curry: curry, apply: apply, compose: compose, flip: flip,
-	inject: inject,
-	foldl: foldl, foldr: foldr,
-	incr: incr, decr: decr
-};
-
-// Use globally (do not use in production)
-var UseFjsGlobally = exports.UseFjsGlobally = function UseFjsGlobally() {
-	Object.assign(global, exported_funcs);
-};
-
-// Or with a normal ES6 scope
-exports.default = exported_funcs;
 

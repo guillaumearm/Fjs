@@ -2,7 +2,11 @@
 ** Author: Guillaume ARM **************************************************************
 ** main.js: Some Fjs tests ************************************************************
 **************************************************************************************/
-import { __, inject, flip, apply, foldl, compose } from '.'
+//import { __, inject, flip, apply, foldl, compose } from '.'
+
+let lib = require('.')
+for (let f in lib)
+   global[f] = lib[f]
 
 // Test compose and foldl
 // This reads from right to left

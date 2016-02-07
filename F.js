@@ -15,8 +15,6 @@ const concatUndefined = xsa => xsb =>
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// FUNCTIONAL STYLE BASICS ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-export const id = x => x
-
 export const curry = (f, ...xs) =>
 	xs.length === f.length
 		? f(...xs)
@@ -32,7 +30,15 @@ export const flip = f => a => b => f(b, a)
 // inject works with objects
 export const inject = curry ( (changes, obj) => { return {...obj, ...changes} } )
 
-// f :: (acc, x, i, arr) => acc
+// f :: (element, index, array) => array
+export const map = f => xs => xs.map(f, this)
+
+// p :: (element, index, array) => array
+// p is a predicat
+export const all = p => xs => xs.every(p, this)
+export const any = p => xs => xs.some(p, this)
+
+// f :: (accumulator, element, index, array) => accumulator
 export const foldl = f => acc => xs => xs.reduce(f, acc)
 export const foldr = f => acc => xs => xs.reverse().reduce(f, acc)
 
@@ -40,20 +46,19 @@ export const foldr = f => acc => xs => xs.reverse().reduce(f, acc)
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// USEFUL FOR COMPOSITION /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+export const id = x => x
+
+export const and = a => b => a && b
+export const or = a => b =>  a || b
+
+export const eq = a => b =>  a == b
+export const ne = a => b =>  a != b
+
+export const lt = a => b =>  a < b
+export const gt = a => b =>  a > b
+export const le = a => b =>  a <= b
+export const ge = a => b =>  a >= b
+
 export const incr = x => ++x
 export const decr = x => --x
-
-const exported_funcs = {
-	__, id,
-	curry, apply, compose, flip,
-	inject,
-	foldl, foldr,
-	incr, decr
-}
-
-// Use globally (do not use in production)
-export const UseFjsGlobally = () => { Object.assign(global, exported_funcs) }
-
-// Or with a normal ES6 scope
-export default exported_funcs
 
