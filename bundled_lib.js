@@ -79,6 +79,11 @@ var map = exports.map = function map(f) {
 		return xs.map(f, undefined);
 	};
 };
+var filter = exports.filter = function filter(f) {
+	return function (xs) {
+		return xs.filter(f, undefined);
+	};
+};
 
 // p :: (element, index, array) => array
 // p is a predicat
@@ -115,47 +120,50 @@ var foldr = exports.foldr = function foldr(f) {
 var id = exports.id = function id(x) {
 	return x;
 };
+var not = exports.not = function not(x) {
+	return !x;
+};
 
 var and = exports.and = function and(a) {
 	return function (b) {
-		return a && b;
+		return b && a;
 	};
 };
 var or = exports.or = function or(a) {
 	return function (b) {
-		return a || b;
+		return b || a;
 	};
 };
 
 var eq = exports.eq = function eq(a) {
 	return function (b) {
-		return a == b;
+		return b == a;
 	};
 };
 var ne = exports.ne = function ne(a) {
 	return function (b) {
-		return a != b;
+		return b != a;
 	};
 };
 
 var lt = exports.lt = function lt(a) {
 	return function (b) {
-		return a < b;
+		return b < a;
 	};
 };
 var gt = exports.gt = function gt(a) {
 	return function (b) {
-		return a > b;
+		return b > a;
 	};
 };
 var le = exports.le = function le(a) {
 	return function (b) {
-		return a <= b;
+		return b <= a;
 	};
 };
 var ge = exports.ge = function ge(a) {
 	return function (b) {
-		return a >= b;
+		return b >= a;
 	};
 };
 

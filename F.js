@@ -32,6 +32,7 @@ export const inject = curry ( (changes, obj) => { return {...obj, ...changes} } 
 
 // f :: (element, index, array) => array
 export const map = f => xs => xs.map(f, this)
+export const filter = f => xs => xs.filter(f, this)
 
 // p :: (element, index, array) => array
 // p is a predicat
@@ -47,17 +48,18 @@ export const foldr = f => acc => xs => xs.reverse().reduce(f, acc)
 /////////////////////// USEFUL FOR COMPOSITION /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 export const id = x => x
+export const not = x => !x
 
-export const and = a => b => a && b
-export const or = a => b =>  a || b
+export const and = a => b => b && a
+export const or = a => b =>  b || a
 
-export const eq = a => b =>  a == b
-export const ne = a => b =>  a != b
+export const eq = a => b =>  b == a
+export const ne = a => b =>  b != a
 
-export const lt = a => b =>  a < b
-export const gt = a => b =>  a > b
-export const le = a => b =>  a <= b
-export const ge = a => b =>  a >= b
+export const lt = a => b =>  b < a
+export const gt = a => b =>  b > a
+export const le = a => b =>  b <= a
+export const ge = a => b =>  b >= a
 
 export const incr = x => ++x
 export const decr = x => --x
