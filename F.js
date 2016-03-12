@@ -23,7 +23,8 @@ export const curry = (f, ...xs) =>
 export const apply = (f, ...xs) => (...otherXs) =>
 	f.apply (this, concatUndefined (xs) (otherXs) )
 
-export const compose = f => g => x => f(g(x))
+export const compose = fs => x =>
+    !fs.length ? x : compose (fs) (fs.pop()(x))
 
 export const flip = f => a => b => f(b, a)
 
@@ -63,3 +64,23 @@ export const ge = a => b =>  b >= a
 
 export const incr = x => ++x
 export const decr = x => --x
+
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////// Monads /////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+export const composeM = bindM => fs => {
+  const boundFs = fs.map(f => bindM(f))
+  return compose (boundFs)
+}
+
+// Writer Monad
+export const Writer = new class {
+  pure = a => [a, []]
+
+  bind = f => ([a, b]) => {
+    const [aa, bb] = f (a)
+    return [aa, b.concat (bb)]
+  }
+}

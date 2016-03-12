@@ -1,6 +1,6 @@
 {
   "name": "Fjs",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Some functional stuffs for JS (ES2015)",
   "main": "bundled_lib.js",
   "repository": {
