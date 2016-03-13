@@ -8,7 +8,7 @@ const task = i => new Async (done => {
   setTimeout(() => {
     console.log(i)
     done(i)
-  }, 1000)
+  }, 420)
 })
 
 

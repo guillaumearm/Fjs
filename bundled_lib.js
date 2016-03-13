@@ -60,7 +60,9 @@ var apply = exports.apply = function apply(f) {
 
 var compose = exports.compose = function compose(fs) {
 	return function (x) {
-		return !fs.length ? x : compose(fs)(fs.pop()(x));
+		if (!fs.length) return x;
+		var f = fs.pop();
+		return compose(fs)(f(x));
 	};
 };
 

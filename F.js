@@ -23,8 +23,11 @@ export const curry = (f, ...xs) =>
 export const apply = (f, ...xs) => (...otherXs) =>
 	f.apply (this, concatUndefined (xs) (otherXs) )
 
-export const compose = fs => x =>
-    !fs.length ? x : compose (fs) (fs.pop()(x))
+export const compose = fs => x => {
+    if (!fs.length) return x
+    const f = fs.pop()
+    return compose (fs) (f(x))
+}
 
 export const flip = f => a => b => f(b, a)
 
