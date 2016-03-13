@@ -48,6 +48,7 @@ export const foldr = f => acc => xs => xs.reverse().reduce(f, acc)
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// USEFUL FOR COMPOSITION /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+export const print = x => { console.log(x) ; return x }
 export const id = x => x
 export const not = x => !x
 
@@ -70,17 +71,93 @@ export const decr = x => --x
 /////////////////////// Monads /////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export const composeM = bindM => fs => {
-  const boundFs = fs.map(f => bindM(f))
-  return compose (boundFs)
+// Monadic composition
+export const composeM = fs => m => {
+	if (!fs.length) return m
+	const f = fs.pop()
+	return composeM (fs) (m.bindM(f))
+}
+
+// Monadic do notation
+export const _do = gen => {
+    const step = value => {
+        const result = gen.next(value)
+        if (result.done)
+            return result.value
+        return result.value.bindM(step)
+    }
+		return step()
+}
+
+export const _asyncDo = gen => new Async((done = id) => {
+    const step = value => {
+        const result = gen.next(value)
+        if (result.done)
+            return done(result.value);
+        return result.value.bindM(step)
+    }
+		return step()
+})
+
+
+// Maybe Monad
+export class Just {
+	constructor(a) {
+		this.return = a
+	}
+	bindM = (f) => f(this.return)
+}
+
+export class Nothing {
+	constructor() {
+		this.return = null
+	}
+	bindM = () => this
 }
 
 // Writer Monad
-export const Writer = new class {
-  pure = a => [a, []]
-
-  bind = f => ([a, b]) => {
-    const [aa, bb] = f (a)
-    return [aa, b.concat (bb)]
+export class Writer {
+	constructor(a, b = []) {
+		this.return = [a, b]
+	}
+  bindM = (f) => {
+		const [a, b] = this.return
+    const [aa, bb] = f(a).return
+		this.return = [aa, b.concat (bb)]
+		return this
   }
+}
+
+
+
+// Async parallel
+const _parallelArray = (m, fs) => {
+	let taskCounter = fs.length
+	let xs = []
+
+	return done => {
+		fs.forEach((f, i) => {
+			const task = f && f.return
+			task(res => {
+				xs[i] = res
+				if (!--taskCounter) done(xs)
+			})
+		})
+	}
+}
+// Async Monad
+export class Async {
+	constructor(f = undefined) {
+		if (f && f.constructor && f.constructor.name === "Async")
+			this.return = f.return
+		else if (Array.isArray(f))
+			this.return = _parallelArray(this, f)
+		else
+			this.return = f
+	}
+	bindM(nextAsync) {
+		const currentAsync = this.return
+		currentAsync(nextAsync)
+		return this
+	}
 }
