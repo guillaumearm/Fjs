@@ -1,10 +1,16 @@
 "use strict";
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /***************************************************************************************
 ** Author: Guillaume ARM ***************************************************************
@@ -52,11 +58,9 @@ var apply = exports.apply = function apply(f) {
 	};
 };
 
-var compose = exports.compose = function compose(f) {
-	return function (g) {
-		return function (x) {
-			return f(g(x));
-		};
+var compose = exports.compose = function compose(fs) {
+	return function (x) {
+		return !fs.length ? x : compose(fs)(fs.pop()(x));
 	};
 };
 
@@ -117,6 +121,9 @@ var foldr = exports.foldr = function foldr(f) {
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////// USEFUL FOR COMPOSITION /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+var print = exports.print = function print(x) {
+	console.log(x);return x;
+};
 var id = exports.id = function id(x) {
 	return x;
 };
@@ -173,4 +180,147 @@ var incr = exports.incr = function incr(x) {
 var decr = exports.decr = function decr(x) {
 	return --x;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////// Monads /////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+// Monadic composition
+var composeM = exports.composeM = function composeM(fs) {
+	return function (m) {
+		if (!fs.length) return m;
+		var f = fs.pop();
+		return composeM(fs)(m.bindM(f));
+	};
+};
+
+// Monadic do notation
+var _do = exports._do = function _do(gen) {
+	var step = function step(value) {
+		var result = gen.next(value);
+		if (result.done) return result.value;
+		return result.value.bindM(step);
+	};
+	return step();
+};
+
+var _asyncDo = exports._asyncDo = function _asyncDo(gen) {
+	return new Async(function () {
+		var done = arguments.length <= 0 || arguments[0] === undefined ? id : arguments[0];
+
+		var step = function step(value) {
+			var result = gen.next(value);
+			if (result.done) return done(result.value);
+			return result.value.bindM(step);
+		};
+		return step();
+	});
+};
+
+// Maybe Monad
+
+var Just = exports.Just = function () {
+	function Just(a) {
+		_classCallCheck(this, Just);
+
+		this.return = a;
+	}
+
+	_createClass(Just, [{
+		key: "bindM",
+		value: function bindM(f) {
+			return f(this.return);
+		}
+	}]);
+
+	return Just;
+}();
+
+var Nothing = exports.Nothing = function () {
+	function Nothing() {
+		_classCallCheck(this, Nothing);
+
+		this.return = null;
+	}
+
+	_createClass(Nothing, [{
+		key: "bindM",
+		value: function bindM() {
+			return this;
+		}
+	}]);
+
+	return Nothing;
+}();
+
+// Writer Monad
+
+var Writer = exports.Writer = function () {
+	function Writer(a) {
+		var b = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+		_classCallCheck(this, Writer);
+
+		this.return = [a, b];
+	}
+
+	_createClass(Writer, [{
+		key: "bindM",
+		value: function bindM(f) {
+			var _return = _slicedToArray(this.return, 2);
+
+			var a = _return[0];
+			var b = _return[1];
+
+			var _f$return = _slicedToArray(f(a).return, 2);
+
+			var aa = _f$return[0];
+			var bb = _f$return[1];
+
+			this.return = [aa, b.concat(bb)];
+			return this;
+		}
+	}]);
+
+	return Writer;
+}();
+
+// Async parallel
+
+var _parallelArray = function _parallelArray(m, fs) {
+	var taskCounter = fs.length;
+	var xs = [];
+
+	return function (done) {
+		fs.forEach(function (f, i) {
+			var task = f && f.return;
+			task(function (res) {
+				xs[i] = res;
+				if (! --taskCounter) done(xs);
+			});
+		});
+	};
+};
+// Async Monad
+
+var Async = exports.Async = function () {
+	function Async() {
+		var f = arguments.length <= 0 || arguments[0] === undefined ? undefined : arguments[0];
+
+		_classCallCheck(this, Async);
+
+		if (f && f.constructor && f.constructor.name === "Async") this.return = f.return;else if (Array.isArray(f)) this.return = _parallelArray(this, f);else this.return = f;
+	}
+
+	_createClass(Async, [{
+		key: "bindM",
+		value: function bindM(nextAsync) {
+			var currentAsync = this.return;
+			currentAsync(nextAsync);
+			return this;
+		}
+	}]);
+
+	return Async;
+}();
 

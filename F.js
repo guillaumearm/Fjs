@@ -105,14 +105,18 @@ export class Just {
 	constructor(a) {
 		this.return = a
 	}
-	bindM = (f) => f(this.return)
+  bindM(f) {
+    return f(this.return)
+  }
 }
 
 export class Nothing {
 	constructor() {
 		this.return = null
 	}
-	bindM = () => this
+  bindM() {
+   return this
+  }
 }
 
 // Writer Monad
@@ -120,7 +124,7 @@ export class Writer {
 	constructor(a, b = []) {
 		this.return = [a, b]
 	}
-  bindM = (f) => {
+  bindM(f) {
 		const [a, b] = this.return
     const [aa, bb] = f(a).return
 		this.return = [aa, b.concat (bb)]

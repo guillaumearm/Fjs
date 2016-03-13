@@ -23,7 +23,7 @@ const rev = ([...xs]) => {
 		(xs);
 }
 const toString = t => t.join("")
-console.log ( compose (toString) (rev) ("Hello World") )
+console.log ( compose ([toString, rev]) ("Hello World") )
 
 // Test appl, content:truey
 const f1 = (a,b,c,d) => a+b+c+d
