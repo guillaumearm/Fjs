@@ -12,7 +12,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.Async = exports.Writer = exports.Nothing = exports.Just = exports._doAsync = exports._do = exports.composeM = exports.decr = exports.incr = exports._ge = exports._le = exports._gt = exports._lt = exports._ne = exports._eq = exports._or = exports._and = exports.ge_ = exports.le_ = exports.gt_ = exports.lt_ = exports.ne_ = exports.eq_ = exports.or_ = exports.and_ = exports.not = exports.id = exports.print = exports.foldr = exports.foldl = exports.any = exports.all = exports.filter = exports.map = exports.inject = exports.flip = exports.compose = exports.apply = exports.curry = exports.__ = undefined;
+exports.Async = exports.Writer = exports.Just = exports.Nothing = exports._doAsync = exports._do = exports.composeM = exports.decr = exports.incr = exports._ge = exports._le = exports._gt = exports._lt = exports._ne = exports._eq = exports._or = exports._and = exports.ge_ = exports.le_ = exports.gt_ = exports.lt_ = exports.ne_ = exports.eq_ = exports.or_ = exports.and_ = exports.not = exports.id = exports.print = exports.foldr = exports.foldl = exports.any = exports.all = exports.filter = exports.map = exports.inject = exports.flip = exports.compose = exports.apply = exports.curry = exports.__ = undefined;
 
 require("./test");
 
@@ -252,7 +252,10 @@ var _doAsync = exports._doAsync = function _doAsync(gen) {
 
 		var step = function step(value) {
 			var result = gen.next(value);
-			if (result.done) return done(result.value);
+			if (result.done) {
+				var ret = done(result.value);
+				return typeof ret === "function" ? Async(ret) : ret;
+			}
 			return result.value.bindM(step);
 		};
 		return step();
@@ -260,18 +263,19 @@ var _doAsync = exports._doAsync = function _doAsync(gen) {
 };
 
 // Maybe Monad
-var Just = exports.Just = function Just(a) {
-	var unit = a;
-	var bindM = function bindM(f) {
-		return f(unit);
+var Nothing = exports.Nothing = function Nothing() {
+	var unit = undefined;
+	var bindM = function bindM() {
+		return Nothing();
 	};
 	return { unit: unit, bindM: bindM };
 };
 
-var Nothing = exports.Nothing = function Nothing() {
-	var unit = null;
-	var bindM = function bindM() {
-		return Nothing();
+var Just = exports.Just = function Just(a) {
+	var unit = a;
+	var bindM = function bindM(f) {
+		var r = f(unit);
+		return r && r.bindM ? r : Just(r);
 	};
 	return { unit: unit, bindM: bindM };
 };
@@ -299,10 +303,14 @@ var _Writer = function () {
 			var a = _unit[0];
 			var b = _unit[1];
 
-			var _f$unit = _slicedToArray(f(a).unit, 2);
+			var r = f(a);
 
-			var aa = _f$unit[0];
-			var bb = _f$unit[1];
+			var _ref = r && r.bindM ? r.unit : Writer(r).unit;
+
+			var _ref2 = _slicedToArray(_ref, 2);
+
+			var aa = _ref2[0];
+			var bb = _ref2[1];
 
 			this.unit = [aa, b.concat(bb)];
 			return this;
@@ -326,7 +334,7 @@ var _Async = function () {
 
 		_classCallCheck(this, _Async);
 
-		if (a && a.constructor && a.constructor.name === "Async") this.unit = a.unit;else if (Array.isArray(a)) this.unit = _parallelArray(this, a);else this.unit = a;
+		if (a && a.constructor && a.constructor.name === "_Async") this.unit = a.unit;else if (Array.isArray(a)) this.unit = _parallelArray(this, a);else this.unit = a;
 	}
 
 	_createClass(_Async, [{
@@ -334,7 +342,9 @@ var _Async = function () {
 		value: function bindM(nextAsync) {
 			var currentAsync = this.unit;
 			currentAsync(nextAsync);
-			return this;
+			return typeof nextAsync === 'function' ? Async(nextAsync) : Async(function () {
+				return nextAsync;
+			});
 		}
 	}]);
 

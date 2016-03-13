@@ -104,7 +104,11 @@ export const _doAsync = gen => new Async((done = id) => {
     const step = value => {
         const result = gen.next(value)
         if (result.done)
-            return done(result.value);
+				{
+						let ret = done(result.value)
+						return (typeof ret === "function")
+						  ? Async(ret) : ret
+				}
         return result.value.bindM(step)
     }
 		return step()
@@ -112,17 +116,21 @@ export const _doAsync = gen => new Async((done = id) => {
 
 
 // Maybe Monad
-export const Just = (a) => {
-	const unit = a
-	const bindM = f => f(unit)
-	return { unit, bindM }
-}
-
 export const Nothing = () => {
-	const unit = null
+	const unit = undefined
 	const bindM = () => Nothing()
 	return { unit, bindM }
 }
+
+export const Just = (a) => {
+	const unit = a
+	const bindM = f => {
+		const r = f(unit)
+		return (r && r.bindM) ? r : Just(r)
+	}
+	return { unit, bindM }
+}
+
 
 
 // Writer Monad
@@ -135,7 +143,8 @@ class _Writer {
 	}
   bindM(f) {
 		const [a, b] = this.unit
-    const [aa, bb] = f(a).unit
+		const r = f(a)
+		const [aa, bb] = (r && r.bindM) ? r.unit : Writer(r).unit
 		this.unit = [aa, b.concat (bb)]
 		return this
   }
@@ -148,7 +157,7 @@ class _Writer {
 export const Async = (a) => new _Async(a)
 class _Async {
 	constructor(a = id) {
-		if (a && a.constructor && a.constructor.name === "Async")
+		if (a && a.constructor && a.constructor.name === "_Async")
 			this.unit = a.unit
 		else if (Array.isArray(a))
 			this.unit = _parallelArray(this, a)
@@ -158,7 +167,8 @@ class _Async {
 	bindM(nextAsync) {
 		const currentAsync = this.unit
 		currentAsync(nextAsync)
-		return this
+		return (typeof nextAsync === 'function')
+			? Async (nextAsync) : Async (() => nextAsync)
 	}
 }
 

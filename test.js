@@ -1,16 +1,16 @@
-import { _do, _doAsync, print, Writer, Just, Nothing, Async } from './F'
+import { _do, _doAsync, print, Writer, Just, Nothing, Async, id } from './F'
 
-import './basic_test'
+//import './basic_test'
 console.log("-------- Begin asynchronous tasks ---------")
-/*******************************/
-const task = i => new Async (done => {
+/******************************************************************************/
+const task = i => Async (done => {
   setTimeout(() => {
     console.log(i)
     done(i)
-  }, 420)
+  }, 400)
 })
 
-const sleep1 = new Async (done => {
+const sleep1 = Async (done => {
   setTimeout(() => {done("OK")}, 1000)
 })
 
@@ -22,13 +22,17 @@ const result1 = _doAsync(function*() {
 }())
 
 const result2 = _doAsync(function*() {
-  const a = yield task(4)
-  const b = yield task(5)
-  const c = yield task(6)
-  return "YOLO"
+  const [a,b,c] = yield Async ([task(4), task(5), task(6)])
+  const d = yield _doAsync(function*(){
+    const aa = yield task(11)
+    const bb = yield task(22)
+    const cc = yield task(33)
+    return aa + bb + cc
+  }())
+  return a + b + c + d
 }())
 
-const testParallel = new Async([result1, result2])
+const testParallel = Async([result1, result2])
 
 const result3 = _doAsync(function*(){
   const [a, str] = yield testParallel
@@ -36,15 +40,33 @@ const result3 = _doAsync(function*(){
   yield sleep1
   return [a + b, str]
 }())
-/***********/
 
-result3.unit(print)
+result2.unit(print)
+/******************************************************************************/
 
-const res = _do(function*(){
-  const a = yield Just(5)
-  const b = yield Just(6)
+/******************************************************************************/
+console.log("--- ", _do(function*(){
+  const a = yield Writer(40, ["First Message"])
+  const b = yield Writer(1, ["Second Message"])
+  const c = yield Writer(1, ["Third Message"])
+  return a + b + c
+}()).unit)
+/******************************************************************************/
 
-  return Just(a + b)
-}())
 
-console.log(res.unit)
+console.log("--- ", _do(function*(){
+  const a = yield Just(10)
+  const b = yield Just(20)
+  const c = yield Just(30)
+  const d = yield Just(40)
+  return a + b + c + d
+}()).unit)
+
+
+console.log("--- ", _do(function*(){
+  const a = yield Just(10)
+  const b = yield Just(20)
+  const c = yield Nothing()
+  const d = yield Just(40)
+  return a + b + c + d
+}()).unit)
