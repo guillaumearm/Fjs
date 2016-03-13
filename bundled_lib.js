@@ -4,18 +4,19 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /***************************************************************************************
+                                                                                                                                                                                                                                                                  ** Author: Guillaume ARM ***************************************************************
+                                                                                                                                                                                                                                                                  ** F.js: is little library utilites made for doing functional coding style with JS. ****
+                                                                                                                                                                                                                                                                  ***************************************************************************************/
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.Async = exports.Writer = exports.Nothing = exports.Just = exports._doAsync = exports._do = exports.composeM = exports.decr = exports.incr = exports._ge = exports._le = exports._gt = exports._lt = exports._ne = exports._eq = exports._or = exports._and = exports.ge_ = exports.le_ = exports.gt_ = exports.lt_ = exports.ne_ = exports.eq_ = exports.or_ = exports.and_ = exports.not = exports.id = exports.print = exports.foldr = exports.foldl = exports.any = exports.all = exports.filter = exports.map = exports.inject = exports.flip = exports.compose = exports.apply = exports.curry = exports.__ = undefined;
+
+require("./test");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/***************************************************************************************
-** Author: Guillaume ARM ***************************************************************
-** F.js: is little library utilites made for doing functional coding style with JS. ****
-***************************************************************************************/
 
 var __ = exports.__ = undefined;
 
@@ -133,46 +134,85 @@ var not = exports.not = function not(x) {
 	return !x;
 };
 
-var and = exports.and = function and(a) {
-	return function (b) {
-		return b && a;
+var and_ = exports.and_ = function and_(b) {
+	return function (a) {
+		return a && b;
 	};
 };
-var or = exports.or = function or(a) {
-	return function (b) {
-		return b || a;
+var or_ = exports.or_ = function or_(b) {
+	return function (a) {
+		return a || b;
+	};
+};
+var eq_ = exports.eq_ = function eq_(b) {
+	return function (a) {
+		return a == b;
+	};
+};
+var ne_ = exports.ne_ = function ne_(b) {
+	return function (a) {
+		return a != b;
+	};
+};
+var lt_ = exports.lt_ = function lt_(b) {
+	return function (a) {
+		return a < b;
+	};
+};
+var gt_ = exports.gt_ = function gt_(b) {
+	return function (a) {
+		return a > b;
+	};
+};
+var le_ = exports.le_ = function le_(b) {
+	return function (a) {
+		return a <= b;
+	};
+};
+var ge_ = exports.ge_ = function ge_(b) {
+	return function (a) {
+		return a >= b;
 	};
 };
 
-var eq = exports.eq = function eq(a) {
+var _and = exports._and = function _and(a) {
 	return function (b) {
-		return b == a;
+		return a && b;
 	};
 };
-var ne = exports.ne = function ne(a) {
+var _or = exports._or = function _or(a) {
 	return function (b) {
-		return b != a;
+		return a || b;
 	};
 };
-
-var lt = exports.lt = function lt(a) {
+var _eq = exports._eq = function _eq(a) {
 	return function (b) {
-		return b < a;
+		return a == b;
 	};
 };
-var gt = exports.gt = function gt(a) {
+var _ne = exports._ne = function _ne(a) {
 	return function (b) {
-		return b > a;
+		return a != b;
 	};
 };
-var le = exports.le = function le(a) {
+var _lt = exports._lt = function _lt(a) {
 	return function (b) {
-		return b <= a;
+		return a < b;
 	};
 };
-var ge = exports.ge = function ge(a) {
+var _gt = exports._gt = function _gt(a) {
 	return function (b) {
-		return b >= a;
+		return a > b;
+	};
+};
+var _le = exports._le = function _le(a) {
+	return function (b) {
+		return a <= b;
+	};
+};
+var _ge = exports._ge = function _ge(a) {
+	return function (b) {
+		return a >= b;
 	};
 };
 
@@ -206,7 +246,7 @@ var _do = exports._do = function _do(gen) {
 	return step();
 };
 
-var _asyncDo = exports._asyncDo = function _asyncDo(gen) {
+var _doAsync = exports._doAsync = function _doAsync(gen) {
 	return new Async(function () {
 		var done = arguments.length <= 0 || arguments[0] === undefined ? id : arguments[0];
 
@@ -220,71 +260,85 @@ var _asyncDo = exports._asyncDo = function _asyncDo(gen) {
 };
 
 // Maybe Monad
+var Just = exports.Just = function Just(a) {
+	var unit = a;
+	var bindM = function bindM(f) {
+		return f(unit);
+	};
+	return { unit: unit, bindM: bindM };
+};
 
-var Just = exports.Just = function () {
-	function Just(a) {
-		_classCallCheck(this, Just);
-
-		this.return = a;
-	}
-
-	_createClass(Just, [{
-		key: "bindM",
-		value: function bindM(f) {
-			return f(this.return);
-		}
-	}]);
-
-	return Just;
-}();
-
-var Nothing = exports.Nothing = function () {
-	function Nothing() {
-		_classCallCheck(this, Nothing);
-
-		this.return = null;
-	}
-
-	_createClass(Nothing, [{
-		key: "bindM",
-		value: function bindM() {
-			return this;
-		}
-	}]);
-
-	return Nothing;
-}();
+var Nothing = exports.Nothing = function Nothing() {
+	var unit = null;
+	var bindM = function bindM() {
+		return Nothing();
+	};
+	return { unit: unit, bindM: bindM };
+};
 
 // Writer Monad
 
-var Writer = exports.Writer = function () {
-	function Writer(a) {
+var Writer = exports.Writer = function Writer(a, b) {
+	return new _Writer(a, b);
+};
+
+var _Writer = function () {
+	function _Writer(a) {
 		var b = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
 
-		_classCallCheck(this, Writer);
+		_classCallCheck(this, _Writer);
 
-		this.return = [a, b];
+		this.unit = [a, b];
 	}
 
-	_createClass(Writer, [{
+	_createClass(_Writer, [{
 		key: "bindM",
 		value: function bindM(f) {
-			var _return = _slicedToArray(this.return, 2);
+			var _unit = _slicedToArray(this.unit, 2);
 
-			var a = _return[0];
-			var b = _return[1];
+			var a = _unit[0];
+			var b = _unit[1];
 
-			var _f$return = _slicedToArray(f(a).return, 2);
+			var _f$unit = _slicedToArray(f(a).unit, 2);
 
-			var aa = _f$return[0];
-			var bb = _f$return[1];
+			var aa = _f$unit[0];
+			var bb = _f$unit[1];
 
-			this.return = [aa, b.concat(bb)];
+			this.unit = [aa, b.concat(bb)];
 			return this;
 		}
 	}]);
 
-	return Writer;
+	return _Writer;
+}();
+
+// Continuation Monad
+
+// Async Monad
+
+var Async = exports.Async = function Async(a) {
+	return new _Async(a);
+};
+
+var _Async = function () {
+	function _Async() {
+		var a = arguments.length <= 0 || arguments[0] === undefined ? id : arguments[0];
+
+		_classCallCheck(this, _Async);
+
+		if (a && a.constructor && a.constructor.name === "Async") this.unit = a.unit;else if (Array.isArray(a)) this.unit = _parallelArray(this, a);else this.unit = a;
+	}
+
+	_createClass(_Async, [{
+		key: "bindM",
+		value: function bindM(nextAsync) {
+			var currentAsync = this.unit;
+			currentAsync(nextAsync);
+			return this;
+		}
+	}]);
+
+	return _Async;
 }();
 
 // Async parallel
@@ -295,7 +349,7 @@ var _parallelArray = function _parallelArray(m, fs) {
 
 	return function (done) {
 		fs.forEach(function (f, i) {
-			var task = f && f.return;
+			var task = f && f.unit;
 			task(function (res) {
 				xs[i] = res;
 				if (! --taskCounter) done(xs);
@@ -303,26 +357,4 @@ var _parallelArray = function _parallelArray(m, fs) {
 		});
 	};
 };
-// Async Monad
-
-var Async = exports.Async = function () {
-	function Async() {
-		var f = arguments.length <= 0 || arguments[0] === undefined ? undefined : arguments[0];
-
-		_classCallCheck(this, Async);
-
-		if (f && f.constructor && f.constructor.name === "Async") this.return = f.return;else if (Array.isArray(f)) this.return = _parallelArray(this, f);else this.return = f;
-	}
-
-	_createClass(Async, [{
-		key: "bindM",
-		value: function bindM(nextAsync) {
-			var currentAsync = this.return;
-			currentAsync(nextAsync);
-			return this;
-		}
-	}]);
-
-	return Async;
-}();
 

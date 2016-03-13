@@ -1,34 +1,50 @@
-/**************************************************************************************
-** Author: Guillaume ARM **************************************************************
-** main.js: Some Fjs tests ************************************************************
-**************************************************************************************/
-//import { __, inject, flip, apply, foldl, compose } from '.'
+import { _do, _doAsync, print, Writer, Just, Nothing, Async } from './F'
 
-// global scope injector
-const globalScopeInjector = lib => {
-	lib.globalScopeInjector = undefined
-	for (let f of Object.keys(lib))
-		global[f] = lib[f]
-}
+import './basic_test'
+console.log("-------- Begin asynchronous tasks ---------")
+/*******************************/
+const task = i => new Async (done => {
+  setTimeout(() => {
+    console.log(i)
+    done(i)
+  }, 420)
+})
 
-import * as F from '.'
-globalScopeInjector(F);
+const sleep1 = new Async (done => {
+  setTimeout(() => {done("OK")}, 1000)
+})
 
-// Test compose and foldl
-// This reads from right to left
-const rev = ([...xs]) => {
-	return foldl 
-		((acc,x) => [x, ...acc]) 
-		('') 
-		(xs);
-}
-const toString = t => t.join("")
-console.log ( compose ([toString, rev]) ("Hello World") )
+const result1 = _doAsync(function*() {
+  const a = yield task(1)
+  const b = yield task(2)
+  const c = yield task(3)
+  return a + b + c
+}())
 
-// Test appl, content:truey
-const f1 = (a,b,c,d) => a+b+c+d
-const f2 = apply(f1, 1, __, 3, __)
-console.log(f2(2,4))
+const result2 = _doAsync(function*() {
+  const a = yield task(4)
+  const b = yield task(5)
+  const c = yield task(6)
+  return "YOLO"
+}())
 
-let initWithHello = flip (inject) ({id: 1, data: [], content: "Hello World"})
-console.log([{id: 1, content:true}].map(initWithHello))
+const testParallel = new Async([result1, result2])
+
+const result3 = _doAsync(function*(){
+  const [a, str] = yield testParallel
+  const b = yield task(36)
+  yield sleep1
+  return [a + b, str]
+}())
+/***********/
+
+result3.unit(print)
+
+const res = _do(function*(){
+  const a = yield Just(5)
+  const b = yield Just(6)
+
+  return Just(a + b)
+}())
+
+console.log(res.unit)

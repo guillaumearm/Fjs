@@ -3,6 +3,7 @@
 ** F.js: is little library utilites made for doing functional coding style with JS. ****
 ***************************************************************************************/
 
+import './test'
 export const __ = undefined
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,16 +56,23 @@ export const print = x => { console.log(x) ; return x }
 export const id = x => x
 export const not = x => !x
 
-export const and = a => b => b && a
-export const or = a => b =>  b || a
+export const and_ = b => a =>  a && b
+export const or_  = b => a =>  a || b
+export const eq_  = b => a =>  a == b
+export const ne_  = b => a =>  a != b
+export const lt_  = b => a =>  a < b
+export const gt_  = b => a =>  a > b
+export const le_  = b => a =>  a <= b
+export const ge_  = b => a =>  a >= b
 
-export const eq = a => b =>  b == a
-export const ne = a => b =>  b != a
-
-export const lt = a => b =>  b < a
-export const gt = a => b =>  b > a
-export const le = a => b =>  b <= a
-export const ge = a => b =>  b >= a
+export const _and = a => b =>  a && b
+export const _or  = a => b =>  a || b
+export const _eq  = a => b =>  a == b
+export const _ne  = a => b =>  a != b
+export const _lt  = a => b =>  a < b
+export const _gt  = a => b =>  a > b
+export const _le  = a => b =>  a <= b
+export const _ge  = a => b =>  a >= b
 
 export const incr = x => ++x
 export const decr = x => --x
@@ -92,7 +100,7 @@ export const _do = gen => {
 		return step()
 }
 
-export const _asyncDo = gen => new Async((done = id) => {
+export const _doAsync = gen => new Async((done = id) => {
     const step = value => {
         const result = gen.next(value)
         if (result.done)
@@ -104,38 +112,55 @@ export const _asyncDo = gen => new Async((done = id) => {
 
 
 // Maybe Monad
-export class Just {
-	constructor(a) {
-		this.return = a
-	}
-  bindM(f) {
-    return f(this.return)
-  }
+export const Just = (a) => {
+	const unit = a
+	const bindM = f => f(unit)
+	return { unit, bindM }
 }
 
-export class Nothing {
-	constructor() {
-		this.return = null
-	}
-  bindM() {
-   return this
-  }
+export const Nothing = () => {
+	const unit = null
+	const bindM = () => Nothing()
+	return { unit, bindM }
 }
+
 
 // Writer Monad
-export class Writer {
+
+export const Writer = (a, b) => new _Writer(a,b)
+
+class _Writer {
 	constructor(a, b = []) {
-		this.return = [a, b]
+		this.unit = [a, b]
 	}
   bindM(f) {
-		const [a, b] = this.return
-    const [aa, bb] = f(a).return
-		this.return = [aa, b.concat (bb)]
+		const [a, b] = this.unit
+    const [aa, bb] = f(a).unit
+		this.unit = [aa, b.concat (bb)]
 		return this
   }
 }
 
+// Continuation Monad
 
+
+// Async Monad
+export const Async = (a) => new _Async(a)
+class _Async {
+	constructor(a = id) {
+		if (a && a.constructor && a.constructor.name === "Async")
+			this.unit = a.unit
+		else if (Array.isArray(a))
+			this.unit = _parallelArray(this, a)
+		else
+			this.unit = a
+	}
+	bindM(nextAsync) {
+		const currentAsync = this.unit
+		currentAsync(nextAsync)
+		return this
+	}
+}
 
 // Async parallel
 const _parallelArray = (m, fs) => {
@@ -144,27 +169,11 @@ const _parallelArray = (m, fs) => {
 
 	return done => {
 		fs.forEach((f, i) => {
-			const task = f && f.return
+			const task = f && f.unit
 			task(res => {
 				xs[i] = res
 				if (!--taskCounter) done(xs)
 			})
 		})
-	}
-}
-// Async Monad
-export class Async {
-	constructor(f = undefined) {
-		if (f && f.constructor && f.constructor.name === "Async")
-			this.return = f.return
-		else if (Array.isArray(f))
-			this.return = _parallelArray(this, f)
-		else
-			this.return = f
-	}
-	bindM(nextAsync) {
-		const currentAsync = this.return
-		currentAsync(nextAsync)
-		return this
 	}
 }
