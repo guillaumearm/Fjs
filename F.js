@@ -157,9 +157,9 @@ class _Writer {
 export const Async = (a) => new _Async(a)
 class _Async {
 	constructor(a = id) {
-		if (a && a.constructor && a.constructor.name === "_Async")
-			this.unit = a.unit
-		else if (Array.isArray(a))
+    if (a instanceof _Async)
+   		this.unit = a.unit
+    else if (Array.isArray(a))
 			this.unit = _parallelArray(this, a)
 		else
 			this.unit = a

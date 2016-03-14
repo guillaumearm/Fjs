@@ -26,7 +26,7 @@ const result2 = _doAsync(function*() {
   const d = yield _doAsync(function*(){
     const aa = yield task(11)
     const bb = yield task(22)
-    const cc = yield task(33)
+    const cc = yield Async(Async(task(33)))
     return aa + bb + cc
   }())
   return a + b + c + d
@@ -70,3 +70,4 @@ console.log("--- ", _do(function*(){
   const d = yield Just(40)
   return a + b + c + d
 }()).unit)
+

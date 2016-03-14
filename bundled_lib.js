@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Async = exports.Writer = exports.Just = exports.Nothing = exports._doAsync = exports._do = exports.composeM = exports.decr = exports.incr = exports._ge = exports._le = exports._gt = exports._lt = exports._ne = exports._eq = exports._or = exports._and = exports.ge_ = exports.le_ = exports.gt_ = exports.lt_ = exports.ne_ = exports.eq_ = exports.or_ = exports.and_ = exports.not = exports.id = exports.print = exports.foldr = exports.foldl = exports.any = exports.all = exports.filter = exports.map = exports.inject = exports.flip = exports.compose = exports.apply = exports.curry = exports.__ = undefined;
 
-require("./test");
+require('./test');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -296,7 +296,7 @@ var _Writer = function () {
 	}
 
 	_createClass(_Writer, [{
-		key: "bindM",
+		key: 'bindM',
 		value: function bindM(f) {
 			var _unit = _slicedToArray(this.unit, 2);
 
@@ -334,11 +334,11 @@ var _Async = function () {
 
 		_classCallCheck(this, _Async);
 
-		if (a && a.constructor && a.constructor.name === "_Async") this.unit = a.unit;else if (Array.isArray(a)) this.unit = _parallelArray(this, a);else this.unit = a;
+		if (a instanceof _Async) this.unit = a.unit;else if (Array.isArray(a)) this.unit = _parallelArray(this, a);else this.unit = a;
 	}
 
 	_createClass(_Async, [{
-		key: "bindM",
+		key: 'bindM',
 		value: function bindM(nextAsync) {
 			var currentAsync = this.unit;
 			currentAsync(nextAsync);
