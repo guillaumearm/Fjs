@@ -116,7 +116,7 @@ var foldl = exports.foldl = function foldl(f) {
 var foldr = exports.foldr = function foldr(f) {
 	return function (acc) {
 		return function (xs) {
-			return xs.reverse().reduce(f, acc);
+			return xs.reduceRight(f, acc);
 		};
 	};
 };

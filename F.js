@@ -46,7 +46,7 @@ export const any = p => xs => xs.some(p, this)
 
 // f :: (accumulator, element, index, array) => accumulator
 export const foldl = f => acc => xs => xs.reduce(f, acc)
-export const foldr = f => acc => xs => xs.reverse().reduce(f, acc)
+export const foldr = f => acc => xs => xs.reduceRight(f, acc)
 
 
 ////////////////////////////////////////////////////////////////////////////////

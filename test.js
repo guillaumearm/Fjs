@@ -1,6 +1,6 @@
 import { _do, _doAsync, print, Writer, Just, Nothing, Async, id } from './F'
 
-//import './basic_test'
+import './basic_test'
 console.log("-------- Begin asynchronous tasks ---------")
 /******************************************************************************/
 const task = i => Async (done => {
