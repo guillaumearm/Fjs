@@ -263,13 +263,14 @@ var _doAsync = exports._doAsync = function _doAsync(gen) {
 };
 
 // Maybe Monad
-var Nothing = exports.Nothing = function Nothing() {
+var _Nothing = function _Nothing() {
 	var unit = undefined;
 	var bindM = function bindM() {
-		return Nothing();
+		return _Nothing();
 	};
 	return { unit: unit, bindM: bindM };
 };
+var Nothing = exports.Nothing = _Nothing();
 
 var Just = exports.Just = function Just(a) {
 	var unit = a;
@@ -281,7 +282,6 @@ var Just = exports.Just = function Just(a) {
 };
 
 // Writer Monad
-
 var Writer = exports.Writer = function Writer(a, b) {
 	return new _Writer(a, b);
 };

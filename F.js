@@ -116,11 +116,12 @@ export const _doAsync = gen => new Async((done = id) => {
 
 
 // Maybe Monad
-export const Nothing = () => {
+const _Nothing = () => {
 	const unit = undefined
-	const bindM = () => Nothing()
+	const bindM = () => _Nothing()
 	return { unit, bindM }
 }
+export const Nothing = _Nothing()
 
 export const Just = (a) => {
 	const unit = a
@@ -134,7 +135,6 @@ export const Just = (a) => {
 
 
 // Writer Monad
-
 export const Writer = (a, b) => new _Writer(a,b)
 
 class _Writer {
