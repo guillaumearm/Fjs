@@ -1,7 +1,7 @@
 {
   "name": "Fjs",
-  "version": "0.2.8",
-  "description": "Some functional stuffs for JS (ES2015)",
+  "version": "0.2.9",
+  "description": "Some functional stuffs",
   "main": "bundled_lib.js",
   "repository": {
     "type": "git",
@@ -10,12 +10,13 @@
   "keywords": [
     "Fjs",
     "functionnal",
+    "monad",
+    "monadic",
+    "monads",
     "curry",
-    "curryfied",
+    "currying",
     "compose",
-    "update",
     "apply",
-    "fold",
     "foldl",
     "foldr"
   ],

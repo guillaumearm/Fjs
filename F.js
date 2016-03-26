@@ -3,7 +3,6 @@
 ** F.js: is little library utilites made for doing functional coding style with JS. ****
 ***************************************************************************************/
 
-import './test'
 export const __ = undefined
 
 ////////////////////////////////////////////////////////////////////////////////
