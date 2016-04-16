@@ -23,11 +23,7 @@ export const curry = (f, ...xs) =>
 export const apply = (f, ...xs) => (...otherXs) =>
 	f.apply (this, concatUndefined (xs) (otherXs) )
 
-export const compose = fs => x => {
-    if (!fs.length) return x
-    const f = fs.pop()
-    return compose (fs) (f(x))
-}
+export const compose = ([f, ...fs]) => x => (!f) ? x : compose (fs) (f(x))
 
 export const flip = f => a => b => f(b, a)
 
@@ -82,11 +78,7 @@ export const decr = x => --x
 ////////////////////////////////////////////////////////////////////////////////
 
 // Monadic composition
-export const composeM = fs => m => {
-	if (!fs.length) return m
-	const f = fs.pop()
-	return composeM (fs) (m.bindM(f))
-}
+export const composeM = ([f, ...fs]) => m => (!f) ? m : compose (fs) (m.bindM(f))
 
 // Monadic do notation
 export const _do = gen => {

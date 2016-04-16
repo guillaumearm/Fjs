@@ -1,16 +1,18 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 /***************************************************************************************
 ** Author: Guillaume ARM ***************************************************************
@@ -58,11 +60,15 @@ var apply = exports.apply = function apply(f) {
 	};
 };
 
-var compose = exports.compose = function compose(fs) {
+var compose = exports.compose = function compose(_ref) {
+	var _ref2 = _toArray(_ref);
+
+	var f = _ref2[0];
+
+	var fs = _ref2.slice(1);
+
 	return function (x) {
-		if (!fs.length) return x;
-		var f = fs.pop();
-		return compose(fs)(f(x));
+		return !f ? x : compose(fs)(f(x));
 	};
 };
 
@@ -227,11 +233,15 @@ var decr = exports.decr = function decr(x) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Monadic composition
-var composeM = exports.composeM = function composeM(fs) {
+var composeM = exports.composeM = function composeM(_ref3) {
+	var _ref4 = _toArray(_ref3);
+
+	var f = _ref4[0];
+
+	var fs = _ref4.slice(1);
+
 	return function (m) {
-		if (!fs.length) return m;
-		var f = fs.pop();
-		return composeM(fs)(m.bindM(f));
+		return !f ? m : compose(fs)(m.bindM(f));
 	};
 };
 
@@ -304,12 +314,12 @@ var _Writer = function () {
 
 			var r = f(a);
 
-			var _ref = r && r.bindM ? r.unit : Writer(r).unit;
+			var _ref5 = r && r.bindM ? r.unit : Writer(r).unit;
 
-			var _ref2 = _slicedToArray(_ref, 2);
+			var _ref6 = _slicedToArray(_ref5, 2);
 
-			var aa = _ref2[0];
-			var bb = _ref2[1];
+			var aa = _ref6[0];
+			var bb = _ref6[1];
 
 			this.unit = [aa, b.concat(bb)];
 			return this;
@@ -322,6 +332,7 @@ var _Writer = function () {
 // Continuation Monad
 
 // Async Monad
+
 
 var Async = exports.Async = function Async(a) {
 	return new _Async(a);
@@ -351,6 +362,7 @@ var _Async = function () {
 }();
 
 // Async parallel
+
 
 var _parallelArray = function _parallelArray(m, fs) {
 	var taskCounter = fs.length;
